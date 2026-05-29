@@ -1,8 +1,8 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+from app.config import get_llm
 from app.schemas.project_state import ProjectState
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
+llm = get_llm(temperature=0.2)
 
 def backend_agent(state: ProjectState):
     """

@@ -10,3 +10,8 @@ class ProjectState(TypedDict):
     frontend_code: Optional[str]
     qa_feedback: Optional[str]
     is_approved: Optional[bool]
+    frontend_desc: Optional[str]
+    backend_desc: Optional[str]
+    final_code: Optional[str]
+
+

@@ -1,8 +1,8 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+from app.config import get_llm
 from app.schemas.project_state import ProjectState
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
+llm = get_llm(temperature=0.0)
 
 def qa_agent_backend(state: ProjectState):
     """QA Agent tests and reviews the backend code."""

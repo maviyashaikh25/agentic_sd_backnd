@@ -1,5 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from langchain_core.messages import HumanMessage
+
+from app.api.activity_bus import activity_bus, build_idle_activity_state
 from app.graph.workflow import graph
 
 router = APIRouter()
@@ -21,6 +23,18 @@ class ConnectionManager:
 
 # Global connection manager instance
 manager = ConnectionManager()
+
+
+@router.websocket("/ws/activity")
+async def activity_websocket(websocket: WebSocket):
+    await activity_bus.connect(websocket)
+    try:
+        await websocket.send_json(build_idle_activity_state())
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        activity_bus.disconnect(websocket)
+
 
 @router.websocket("/ws/chat")
 async def websocket_endpoint(websocket: WebSocket):

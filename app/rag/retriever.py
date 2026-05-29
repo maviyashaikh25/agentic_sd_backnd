@@ -1,4 +1,4 @@
-from langchain.tools.retriever import create_retriever_tool
+from langchain_core.tools import create_retriever_tool
 from app.rag.vector_store import get_vector_store
 
 def get_rag_tool():

@@ -56,7 +56,8 @@ backend/
    Create a `.env` file in the root directory to store your API keys and parameters securely.
    ```ini
    # .env
-   OPENAI_API_KEY=your_api_key_here
+   GROQ_API_KEY=your_api_key_here
+   GROQ_MODEL=llama-3.3-70b-versatile
    ```
 
 5. **Start the Development Server:**

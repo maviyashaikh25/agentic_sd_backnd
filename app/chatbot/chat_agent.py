@@ -1,6 +1,6 @@
-from langchain_openai import ChatOpenAI
+from app.config import get_llm
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+llm = get_llm()
 
 def chat_agent(message):
 

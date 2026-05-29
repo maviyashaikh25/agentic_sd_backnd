@@ -1,7 +1,7 @@
-from langchain_openai import ChatOpenAI
+from app.config import get_llm
 from langchain_core.prompts import PromptTemplate
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+llm = get_llm(temperature=0)
 
 prompt = PromptTemplate.from_template("""
 Classify the user input into exactly one of these intents:
