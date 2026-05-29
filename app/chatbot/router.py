@@ -48,12 +48,12 @@ class ChatMessageResponse(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
     intent_detected: str
-    status: str
-    action_result: str
-    files_written: List[str]
-    qa_feedback: str
-    frontend_desc: str
-    backend_desc: str
+    status: Optional[str] = "unknown"
+    action_result: Optional[str] = ""
+    files_written: Optional[List[str]] = []
+    qa_feedback: Optional[str] = ""
+    frontend_desc: Optional[str] = ""
+    backend_desc: Optional[str] = ""
     session_id: str
 
 @router.get("/chat/sessions", response_model=List[ChatSessionResponse])
@@ -179,14 +179,14 @@ async def chat_endpoint(
     # 4. Invoke the LangGraph workflow
     result = await run_workflow_with_activity(request.message)
 
-    final_message = result.get("final_response") or result["messages"][-1].content
-    intent_detected = result.get("intent", "UNKNOWN")
-    status_state = result.get("status", "unknown")
-    action_result = result.get("action_result", "")
-    files_written = result.get("files_written", [])
-    qa_feedback = result.get("qa_feedback", "")
-    frontend_desc = result.get("frontend_desc", "")
-    backend_desc = result.get("backend_desc", "")
+    final_message = result.get("final_response") or (result["messages"][-1].content if result.get("messages") else "Execution completed.")
+    intent_detected = result.get("intent") or "UNKNOWN"
+    status_state = result.get("status") or "unknown"
+    action_result = result.get("action_result") or ""
+    files_written = result.get("files_written") or []
+    qa_feedback = result.get("qa_feedback") or ""
+    frontend_desc = result.get("frontend_desc") or ""
+    backend_desc = result.get("backend_desc") or ""
 
     assistant_content = action_result or final_message or "Execution completed."
 
