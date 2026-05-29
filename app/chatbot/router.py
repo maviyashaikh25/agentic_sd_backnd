@@ -12,8 +12,30 @@ from app.graph.workflow import run_workflow_with_activity
 from app.utils.db import get_db
 from app.models import User, ChatSession, ChatMessage
 from app.utils.auth import get_current_user
+from langchain_core.messages import HumanMessage
+from app.config import get_llm
 
 router = APIRouter()
+
+async def summarize_qa_feedback(feedback: str) -> str:
+    """Summarizes multi-paragraph QA feedback into 2-5 concise lines/bullets."""
+    if not feedback:
+        return ""
+    try:
+        llm = get_llm(temperature=0.1)
+        prompt = (
+            "Summarize the following QA feedback into exactly 2 to 4 concise bullet points. "
+            "Focus only on the high-level issues found. Do not write code or long explanations.\n\n"
+            "QA Feedback:\n"
+            f"{feedback}"
+        )
+        response = await llm.ainvoke([HumanMessage(content=prompt)])
+        summary = response.content.strip()
+        return f"This QA feedback was resolved by the Refiner Agent:\n\n{summary}"
+    except Exception as e:
+        print(f"Error summarizing QA feedback: {e}")
+        return "This QA feedback was resolved by the Refiner Agent."
+
 
 class ChatRequest(BaseModel):
     message: str
@@ -184,7 +206,13 @@ async def chat_endpoint(
     status_state = result.get("status") or "unknown"
     action_result = result.get("action_result") or ""
     files_written = result.get("files_written") or []
-    qa_feedback = result.get("qa_feedback") or ""
+    
+    raw_qa_feedback = result.get("qa_feedback") or ""
+    if raw_qa_feedback and intent_detected == "ACTION":
+        qa_feedback = await summarize_qa_feedback(raw_qa_feedback)
+    else:
+        qa_feedback = raw_qa_feedback
+
     frontend_desc = result.get("frontend_desc") or ""
     backend_desc = result.get("backend_desc") or ""
 
