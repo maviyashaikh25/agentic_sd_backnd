@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: pgvector/pgvector:16
+    image: pgvector/pgvector:pg16
     container_name: agentic_postgres
     ports:
       - "5432:5432"
